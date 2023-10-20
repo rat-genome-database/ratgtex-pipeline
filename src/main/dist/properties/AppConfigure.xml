@@ -1,0 +1,9 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    <bean id="manager" class="edu.mcw.rgd.RatGtexImport">
+        <property name="version" value="--RatGtex Import pipeline  -- build Oct 20, 2023" />
+        <property name="srcPipeline" value="RatGTEx" />
+        <property name="ratGtexXdbKey" value="148"/>
+    </bean>
+</beans>
