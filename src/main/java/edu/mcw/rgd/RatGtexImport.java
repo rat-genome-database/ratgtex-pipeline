@@ -58,8 +58,6 @@ public class RatGtexImport {
 
     public void run(int speciesTypeKey) throws Exception {
 
-        long time0 = System.currentTimeMillis();
-
         var species = SpeciesType.getCommonName(speciesTypeKey);
         log.info("");
 
@@ -106,8 +104,6 @@ public class RatGtexImport {
         int diffCount = finalXdbIdCount - initialXdbIdCount;
         String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "     no changes";
         log.info(species+" RatGTEx ids total:      "+Utils.formatThousands(finalXdbIdCount)+diffCountStr);
-
-        log.info("=== OK ===  elapsed "+ Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
 
     List<XdbId> removeAll(List<XdbId> ids, List<XdbId> idsToBeRemoved) {
@@ -135,7 +131,6 @@ public class RatGtexImport {
 
         List<Gene> genes = dao.getActiveGenes(speciesTypeKey);
         Set<XdbId> ensmblIds = new HashSet<>(genes.size());
-//        List<XdbId> incomingIds = new ArrayList<XdbId>(genes.size());
         for (Gene g: genes) {
 
             List<XdbId> geneEnsmblXdbIds=dao.getGeneEnsmblXdbIdByRgdID(g.getRgdId());
