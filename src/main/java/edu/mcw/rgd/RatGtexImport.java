@@ -4,6 +4,7 @@ import edu.mcw.rgd.datamodel.Gene;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.log.RGDSpringLogger;
+import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,12 +47,18 @@ public class RatGtexImport {
 
         long time0 = System.currentTimeMillis();
 
+        MemoryMonitor memoryMonitor = new MemoryMonitor();
+        memoryMonitor.start();
+
         log.info(getVersion());
         log.info("  "+dao.getConnectionInfo());
         SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info("   started at "+sdt.format(new Date()));
 
         run(SpeciesType.RAT);
+
+        memoryMonitor.stop();
+        log.info(memoryMonitor.getSummary());
         log.info("");
         log.info("=== OK === elapsed "+ Utils.formatElapsedTime(time0, System.currentTimeMillis()));
     }
@@ -76,7 +83,7 @@ public class RatGtexImport {
         log.debug("  QC: determine matching RatGTEx Ids");
         List<XdbId> idsMatching = retainAll(idsInRgd, idsIncoming);
 
-        // determine to-be-deleted cosmic ids
+        // determine to-be-deleted RatGTEx ids
         log.debug("  QC: determine to-be-deleted RatGTEx Ids");
         List<XdbId> idsToBeDeleted = removeAll(idsInRgd, idsIncoming);
 
@@ -97,7 +104,7 @@ public class RatGtexImport {
             dao.updateModificationDate(idsMatching);
         }
 
-        logSummaryIntoRgdSpringLogger(idsMatching.size()+idsToBeDeleted.size()-idsToBeDeleted.size(), species);
+        logSummaryIntoRgdSpringLogger(idsMatching.size()+idsToBeInserted.size()-idsToBeDeleted.size(), species);
 
         NumberFormat plusMinusNF = new DecimalFormat(" +###,###,###; -###,###,###");
         int finalXdbIdCount = initialXdbIdCount + idsToBeInserted.size() - idsToBeDeleted.size();

@@ -2,7 +2,7 @@
 
 <beans>
     <bean id="manager" class="edu.mcw.rgd.RatGtexImport">
-        <property name="version" value="--ratgtex-import-pipeline  -- build Mar 04, 2026" />
+        <property name="version" value="ratgtex-pipeline   -- build Apr 09, 2026" />
         <property name="srcPipeline" value="RatGTEx" />
         <property name="ratGtexXdbKey" value="148"/>
     </bean>
