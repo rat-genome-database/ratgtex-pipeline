@@ -136,24 +136,28 @@ public class RatGtexImport {
 
     List<XdbId> getIncomingIds(int speciesTypeKey) throws Exception {
 
-        List<Gene> genes = dao.getActiveGenes(speciesTypeKey);
-        Set<XdbId> ensmblIds = new HashSet<>(genes.size());
-        for (Gene g: genes) {
-
-            List<XdbId> geneEnsmblXdbIds=dao.getGeneEnsmblXdbIdByRgdID(g.getRgdId());
-            for(XdbId xid:geneEnsmblXdbIds) {
-                XdbId x = new XdbId();
-                x.setAccId(xid.getAccId());
-                x.setSrcPipeline(getSrcPipeline());
-                x.setRgdId(xid.getRgdId());
-                x.setXdbKey(getRatGtexXdbKey());
-                x.setCreationDate(new Date());
-                x.setModificationDate(x.getCreationDate());
-                ensmblIds.add(x);
-            }
+        // active gene rgd ids for the species
+        Set<Integer> activeGeneRgdIds = new HashSet<>();
+        for( Gene g: dao.getActiveGenes(speciesTypeKey) ) {
+            activeGeneRgdIds.add(g.getRgdId());
         }
-        List<XdbId> incomingIds = new ArrayList<XdbId>(ensmblIds);
-        return incomingIds;
+
+        // build a RatGTEx xref from every Ensembl-gene xref that belongs to an active gene
+        Set<XdbId> ensmblIds = new HashSet<>();
+        for( XdbId xid: dao.getEnsemblXdbIds(speciesTypeKey) ) {
+            if( !activeGeneRgdIds.contains(xid.getRgdId()) ) {
+                continue;
+            }
+            XdbId x = new XdbId();
+            x.setAccId(xid.getAccId());
+            x.setSrcPipeline(getSrcPipeline());
+            x.setRgdId(xid.getRgdId());
+            x.setXdbKey(getRatGtexXdbKey());
+            x.setCreationDate(new Date());
+            x.setModificationDate(x.getCreationDate());
+            ensmblIds.add(x);
+        }
+        return new ArrayList<>(ensmblIds);
     }
 
     public void setVersion(String version) {

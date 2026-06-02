@@ -1,3 +1,6 @@
+Jun 2, 2026
+  build incoming ids with a single bulk Ensembl-xref query instead of one query per gene; updated dependencies
+
 Apr 09, 2026
   added MemoryMonitor; fixed summary logger bug; updated README; updated dependencies
 

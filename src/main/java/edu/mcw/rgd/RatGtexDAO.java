@@ -35,8 +35,11 @@ public class RatGtexDAO {
         return xdao.getXdbIds(filter, speciesTypeKey);
     }
 
-    public List<XdbId> getGeneEnsmblXdbIdByRgdID(int geneRgdId) throws Exception {
-        return xdao.getXdbIdsByRgdId(XdbId.XDB_KEY_ENSEMBL_GENES, geneRgdId);
+    /// all Ensembl-gene xdb ids for the given species, in a single query
+    public List<XdbId> getEnsemblXdbIds(int speciesTypeKey) throws Exception {
+        XdbId filter = new XdbId();
+        filter.setXdbKey(XdbId.XDB_KEY_ENSEMBL_GENES);
+        return xdao.getXdbIds(filter, speciesTypeKey);
     }
 
     /**
