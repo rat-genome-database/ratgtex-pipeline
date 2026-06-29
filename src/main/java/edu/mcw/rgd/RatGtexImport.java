@@ -6,6 +6,7 @@ import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.log.RGDSpringLogger;
 import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -59,8 +60,7 @@ public class RatGtexImport {
 
         memoryMonitor.stop();
         log.info(memoryMonitor.getSummary());
-        log.info("");
-        log.info("=== OK === elapsed "+ Utils.formatElapsedTime(time0, System.currentTimeMillis()));
+        log.info("=== OK === elapsed "+ Utils.formatElapsedTime(time0, System.currentTimeMillis())+"\n");
     }
 
     public void run(int speciesTypeKey) throws Exception {
@@ -77,15 +77,16 @@ public class RatGtexImport {
 
         // determine to-be-inserted RatGTEx ids
         log.debug("  QC: determine to-be-inserted RatGTEx Ids");
-        List<XdbId> idsToBeInserted = removeAll(idsIncoming, idsInRgd);
+        Collection<XdbId> idsToBeInserted = CollectionUtils.subtract(idsIncoming, idsInRgd);
 
         // determine matching RatGTEx ids
+        // note: in-rgd objects first, so the matching set carries ACC_XDB_KEY for the modification-date update
         log.debug("  QC: determine matching RatGTEx Ids");
-        List<XdbId> idsMatching = retainAll(idsInRgd, idsIncoming);
+        Collection<XdbId> idsMatching = CollectionUtils.intersection(idsInRgd, idsIncoming);
 
         // determine to-be-deleted RatGTEx ids
         log.debug("  QC: determine to-be-deleted RatGTEx Ids");
-        List<XdbId> idsToBeDeleted = removeAll(idsInRgd, idsIncoming);
+        Collection<XdbId> idsToBeDeleted = CollectionUtils.subtract(idsInRgd, idsIncoming);
 
 
         // loading
@@ -113,20 +114,6 @@ public class RatGtexImport {
         log.info(species+" RatGTEx ids total:      "+Utils.formatThousands(finalXdbIdCount)+diffCountStr);
     }
 
-    List<XdbId> removeAll(List<XdbId> ids, List<XdbId> idsToBeRemoved) {
-        Set<XdbId> idsToBeRemovedSet = new HashSet<XdbId>(idsToBeRemoved);
-        List<XdbId> result = new ArrayList<XdbId>(ids);
-        result.removeAll(idsToBeRemovedSet);
-        return result;
-    }
-
-    List<XdbId> retainAll(List<XdbId> list1, List<XdbId> list2) {
-        Set<XdbId> idsToBeRetained = new HashSet<XdbId>(list2);
-        List<XdbId> result = new ArrayList<XdbId>(list1);
-        result.retainAll(idsToBeRetained);
-        return result;
-    }
-
     void logSummaryIntoRgdSpringLogger(int RatGTExIdsTotal, String species) throws Exception {
 
         RGDSpringLogger rgdLogger = new RGDSpringLogger();
@@ -143,7 +130,7 @@ public class RatGtexImport {
         }
 
         // build a RatGTEx xref from every Ensembl-gene xref that belongs to an active gene
-        Set<XdbId> ensmblIds = new HashSet<>();
+        Set<XdbId> ensemblIds = new HashSet<>();
         for( XdbId xid: dao.getEnsemblXdbIds(speciesTypeKey) ) {
             if( !activeGeneRgdIds.contains(xid.getRgdId()) ) {
                 continue;
@@ -155,9 +142,9 @@ public class RatGtexImport {
             x.setXdbKey(getRatGtexXdbKey());
             x.setCreationDate(new Date());
             x.setModificationDate(x.getCreationDate());
-            ensmblIds.add(x);
+            ensemblIds.add(x);
         }
-        return new ArrayList<>(ensmblIds);
+        return new ArrayList<>(ensemblIds);
     }
 
     public void setVersion(String version) {

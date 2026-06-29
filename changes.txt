@@ -1,3 +1,6 @@
+Jun 29, 2026
+  use CollectionUtils for the insert/match/delete set diffs (dropped custom helpers); updated dependencies
+
 Jun 2, 2026
   build incoming ids with a single bulk Ensembl-xref query instead of one query per gene; updated dependencies
 
