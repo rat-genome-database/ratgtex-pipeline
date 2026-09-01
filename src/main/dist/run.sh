@@ -6,7 +6,7 @@
 APPNAME="ratgtex-pipeline"
 APPDIR=/home/rgddata/pipelines/$APPNAME
 SERVER=`hostname -s | tr '[a-z]' '[A-Z]'`
-EMAIL_LIST="akundurthi@mcw.edu mtutaj@mcw.edu"
+EMAIL_LIST="mtutaj@mcw.edu"
 
 cd $APPDIR
 java -Dspring.config=$APPDIR/../properties/default_db2.xml \

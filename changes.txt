@@ -1,3 +1,6 @@
+Sep 1, 2026
+  removed RGDSpringLogger summary (its total was miscounted when deletions occurred); minor cleanups; updated dependencies
+
 Jun 29, 2026
   use CollectionUtils for the insert/match/delete set diffs (dropped custom helpers); updated dependencies
 

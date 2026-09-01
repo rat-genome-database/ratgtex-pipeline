@@ -3,7 +3,6 @@ package edu.mcw.rgd;
 import edu.mcw.rgd.datamodel.Gene;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
-import edu.mcw.rgd.log.RGDSpringLogger;
 import edu.mcw.rgd.process.MemoryMonitor;
 import edu.mcw.rgd.process.Utils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -105,20 +104,11 @@ public class RatGtexImport {
             dao.updateModificationDate(idsMatching);
         }
 
-        logSummaryIntoRgdSpringLogger(idsMatching.size()+idsToBeInserted.size()-idsToBeDeleted.size(), species);
-
         NumberFormat plusMinusNF = new DecimalFormat(" +###,###,###; -###,###,###");
         int finalXdbIdCount = initialXdbIdCount + idsToBeInserted.size() - idsToBeDeleted.size();
         int diffCount = finalXdbIdCount - initialXdbIdCount;
         String diffCountStr = diffCount!=0 ? "     difference: "+ plusMinusNF.format(diffCount) : "     no changes";
         log.info(species+" RatGTEx ids total:      "+Utils.formatThousands(finalXdbIdCount)+diffCountStr);
-    }
-
-    void logSummaryIntoRgdSpringLogger(int RatGTExIdsTotal, String species) throws Exception {
-
-        RGDSpringLogger rgdLogger = new RGDSpringLogger();
-        String subsystem = "RatGTEx"+species;
-        rgdLogger.log(subsystem, "RatGTExIdsTotal", RatGTExIdsTotal);
     }
 
     List<XdbId> getIncomingIds(int speciesTypeKey) throws Exception {
@@ -130,6 +120,7 @@ public class RatGtexImport {
         }
 
         // build a RatGTEx xref from every Ensembl-gene xref that belongs to an active gene
+        Date dt = new Date();
         Set<XdbId> ensemblIds = new HashSet<>();
         for( XdbId xid: dao.getEnsemblXdbIds(speciesTypeKey) ) {
             if( !activeGeneRgdIds.contains(xid.getRgdId()) ) {
@@ -140,8 +131,8 @@ public class RatGtexImport {
             x.setSrcPipeline(getSrcPipeline());
             x.setRgdId(xid.getRgdId());
             x.setXdbKey(getRatGtexXdbKey());
-            x.setCreationDate(new Date());
-            x.setModificationDate(x.getCreationDate());
+            x.setCreationDate(dt);
+            x.setModificationDate(dt);
             ensemblIds.add(x);
         }
         return new ArrayList<>(ensemblIds);
