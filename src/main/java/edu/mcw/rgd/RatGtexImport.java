@@ -1,6 +1,5 @@
 package edu.mcw.rgd;
 
-import edu.mcw.rgd.datamodel.Gene;
 import edu.mcw.rgd.datamodel.SpeciesType;
 import edu.mcw.rgd.datamodel.XdbId;
 import edu.mcw.rgd.process.MemoryMonitor;
@@ -114,10 +113,7 @@ public class RatGtexImport {
     List<XdbId> getIncomingIds(int speciesTypeKey) throws Exception {
 
         // active gene rgd ids for the species
-        Set<Integer> activeGeneRgdIds = new HashSet<>();
-        for( Gene g: dao.getActiveGenes(speciesTypeKey) ) {
-            activeGeneRgdIds.add(g.getRgdId());
-        }
+        Set<Integer> activeGeneRgdIds = new HashSet<>(dao.getActiveGeneRgdIds(speciesTypeKey));
 
         // build a RatGTEx xref from every Ensembl-gene xref that belongs to an active gene
         Date dt = new Date();

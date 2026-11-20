@@ -2,7 +2,6 @@ package edu.mcw.rgd;
 
 import edu.mcw.rgd.dao.impl.GeneDAO;
 import edu.mcw.rgd.dao.impl.XdbIdDAO;
-import edu.mcw.rgd.datamodel.Gene;
 import edu.mcw.rgd.datamodel.XdbId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,13 +43,13 @@ public class RatGtexDAO {
     }
 
     /**
-     * Returns all active genes for given species. Results do not contain splices or alleles
+     * Returns RGD ids of all active genes for given species. Results do not contain splices or alleles
      * @param speciesKey species type key
-     * @return list of active genes for given species
+     * @return list of RGD ids of active genes for given species
      * @throws Exception when unexpected error in spring framework occurs
      */
-    public List<Gene> getActiveGenes(int speciesKey) throws Exception {
-        return gdao.getActiveGenes(speciesKey);
+    public List<Integer> getActiveGeneRgdIds(int speciesKey) throws Exception {
+        return gdao.getActiveGeneRgdIds(speciesKey);
     }
 
     /**

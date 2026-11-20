@@ -8,9 +8,15 @@ APPDIR=/home/rgddata/pipelines/$APPNAME
 SERVER=`hostname -s | tr '[a-z]' '[A-Z]'`
 EMAIL_LIST="mtutaj@mcw.edu"
 
-cd $APPDIR
+cd $APPDIR || exit 1
 java -Dspring.config=$APPDIR/../properties/default_db2.xml \
     -Dlog4j.configurationFile=file://$APPDIR/properties/log4j2.xml \
     -jar lib/$APPNAME.jar "$@" > run.log 2>&1
+STATUS=$?
 
-mailx -s "[$SERVER] RatGTex Pipeline Run" $EMAIL_LIST < $APPDIR/logs/summary.log
+SUBJECT="[$SERVER] RatGTex Pipeline Run"
+if [ $STATUS -ne 0 ]; then
+    SUBJECT="$SUBJECT -- FAILED (exit code $STATUS)"
+fi
+mailx -s "$SUBJECT" $EMAIL_LIST < $APPDIR/logs/summary.log
+exit $STATUS
