@@ -1,3 +1,6 @@
+Nov 20, 2026
+  run.sh: failed runs flagged in the email subject; active gene ids loaded with GeneDAO.getActiveGeneRgdIds; updated rgdcore and dependencies; updated README
+
 Sep 1, 2026
   removed RGDSpringLogger summary (its total was miscounted when deletions occurred); minor cleanups; updated dependencies
 

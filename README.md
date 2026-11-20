@@ -19,7 +19,12 @@ RatGTEx XDB ID entries. Syncs these entries against the database using delta-bas
 
 ## Logging
 
-- `status` — pipeline progress and summary counters
+Log files under `logs/`:
+- `status.log` — pipeline progress and summary counters (monthly rollover)
+- `summary.log` — the same counters for the last run only; emailed by `run.sh`
+  (the email subject is marked FAILED when the run exits with an error)
+- `detail.log` — debug-level progress
+- `inserted.log`, `deleted.log` — every RatGTEx xref inserted / deleted
 
 ## Build and run
 
